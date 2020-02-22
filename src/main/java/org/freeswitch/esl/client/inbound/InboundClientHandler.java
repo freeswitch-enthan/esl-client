@@ -38,7 +38,7 @@ import org.freeswitch.esl.client.transport.message.EslHeaders;
  * pipeline prior to this handler. This will ensure that each incoming message is processed in its
  * own thread (although still guaranteed to be processed in the order of receipt).
  */
-class InboundClientHandler extends AbstractEslClientHandler {
+public class InboundClientHandler extends AbstractEslClientHandler {
 
 	private final String password;
 	private final IEslProtocolListener listener;
@@ -50,30 +50,30 @@ class InboundClientHandler extends AbstractEslClientHandler {
 
 	@Override
 	protected void handleEslEvent(ChannelHandlerContext ctx, EslEvent event) {
-		log.debug("Received event: [{}]", event);
+		log.info("Received event: [{}]", event);
 		listener.eventReceived(new Context(ctx.channel(), this), event);
 	}
 
 	@Override
 	protected void handleAuthRequest(ChannelHandlerContext ctx) {
-		log.debug("Auth requested, sending [auth {}]", "*****");
+		log.info("Auth requested, sending [auth {}]", this.password);
 
-		sendApiSingleLineCommand(ctx.channel(), "auth " + password)
-				.thenAccept(response -> {
-					log.debug("Auth response [{}]", response);
-					if (response.getContentType().equals(EslHeaders.Value.COMMAND_REPLY)) {
-						final CommandResponse commandResponse = new CommandResponse("auth " + password, response);
-						listener.authResponseReceived(commandResponse);
-					} else {
-						log.error("Bad auth response message [{}]", response);
-						throw new IllegalStateException("Incorrect auth response");
-					}
-				});
+		sendApiSingleLineCommand(ctx.channel(), "auth " + this.password)
+			.thenAccept(response -> {
+				log.info("Auth response [{}]", response);
+				if (response.getContentType().equals(EslHeaders.Value.COMMAND_REPLY)) {
+					final CommandResponse commandResponse = new CommandResponse("auth " + this.password, response);
+					listener.authResponseReceived(commandResponse);
+				} else {
+					log.error("Bad auth response message [{}]", response);
+					throw new IllegalStateException("Incorrect auth response");
+				}
+			});
 	}
 
 	@Override
 	protected void handleDisconnectionNotice() {
-		log.debug("Received disconnection notice");
+		log.info("Received disconnection notice");
 		listener.disconnected();
 	}
 

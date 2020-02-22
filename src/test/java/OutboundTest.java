@@ -1,5 +1,7 @@
 import com.google.common.base.Throwables;
-
+import java.net.InetSocketAddress;
+import java.util.List;
+import java.util.Map;
 import org.freeswitch.esl.client.dptools.Execute;
 import org.freeswitch.esl.client.dptools.ExecuteException;
 import org.freeswitch.esl.client.inbound.Client;
@@ -11,15 +13,13 @@ import org.freeswitch.esl.client.transport.message.EslHeaders.Name;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetSocketAddress;
-import java.util.List;
-import java.util.Map;
-
 public class OutboundTest {
+
     private static Logger logger = LoggerFactory.getLogger(OutboundTest.class);
     private static String sb = "/usr/local/freeswitch/sounds/en/us/callie/ivr/8000/";
     String prompt = sb + "ivr-please_enter_extension_followed_by_pound.wav";
     String failed = sb + "ivr-that_was_an_invalid_entry.wav";
+
     public static void main(String[] args) {
         new OutboundTest();
     }
@@ -28,7 +28,7 @@ public class OutboundTest {
         try {
 
             final Client inboudClient = new Client();
-            inboudClient.connect(new InetSocketAddress("localhost", 8021), "ClueCon", 10);
+            inboudClient.connect(new InetSocketAddress("192.168.10.100", 8021), "ClueCon", 10);
             inboudClient.addEventListener((ctx, event) -> logger.info("INBOUND onEslEvent: {}", event.getEventName()));
 
             final SocketClient outboundServer = new SocketClient(
@@ -37,53 +37,35 @@ public class OutboundTest {
                         @Override
                         public void onConnect(Context context,
                                 EslEvent eslEvent) {
-
-
                             logger.warn(nameMapToString(eslEvent
                                     .getMessageHeaders(), eslEvent.getEventBodyLines()));
 
-                            String uuid = eslEvent.getEventHeaders()
-                                    .get("unique-id");
+                            String uuid = eslEvent.getEventHeaders().get("unique-id");
+                            logger.warn("Creating execute app for uuid {}", uuid);
 
-                            logger.warn(
-                                    "Creating execute app for uuid {}",
-                                    uuid);
-
-                            Execute exe = new Execute(context, uuid);
-
+                            Execute execute = new Execute(context, uuid);
                             try {
-
-                                exe.answer();
-
-                                String digits = exe.playAndGetDigits(3,
+                                execute.answer();
+                                String digits = execute.playAndGetDigits(3,
                                         5, 10, 10 * 1000, "#", prompt,
                                         failed, "^\\d+", 10 * 1000);
-                                logger.warn("Digits collected: {}",
-                                        digits);
-
+                                logger.warn("Digits collected: {}", digits);
 
                             } catch (ExecuteException e) {
-                                logger.error(
-                                        "Could not prompt for digits",
-                                        e);
+                                logger.error("Could not prompt for digits", e);
 
                             } finally {
                                 try {
-                                    exe.hangup(null);
+                                    execute.hangup(null);
                                 } catch (ExecuteException e) {
-                                    logger.error(
-                                            "Could not hangup",e);
+                                    logger.error("Could not hangup", e);
                                 }
                             }
-
                         }
 
                         @Override
-                        public void onEslEvent(Context ctx,
-                                EslEvent event) {
-                            logger.info("OUTBOUND onEslEvent: {}",
-                                    event.getEventName());
-
+                        public void onEslEvent(Context ctx, EslEvent event) {
+                            logger.info("OUTBOUND onEslEvent: {}", event.getEventName());
                         }
                     });
             outboundServer.startAsync();
@@ -97,8 +79,9 @@ public class OutboundTest {
             List<String> lines) {
         StringBuilder sb = new StringBuilder("\nHeaders:\n");
         for (Name key : map.keySet()) {
-            if(key == null)
+            if (key == null) {
                 continue;
+            }
             sb.append(key.toString());
             sb.append("\n\t\t\t\t = \t ");
             sb.append(map.get(key));

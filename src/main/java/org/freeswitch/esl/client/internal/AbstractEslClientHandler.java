@@ -111,22 +111,22 @@ public abstract class AbstractEslClientHandler extends SimpleChannelInboundHandl
 
 		switch (contentType) {
 			case Value.API_RESPONSE:
-				log.debug("Api response received [{}]", message);
+				log.info("Api response received [{}]", message);
 				apiCalls.poll().complete(message);
 				break;
 
 			case Value.COMMAND_REPLY:
-				log.debug("Command reply received [{}]", message);
+				log.info("Command reply received [{}]", message);
 				apiCalls.poll().complete(message);
 				break;
 
 			case Value.AUTH_REQUEST:
-				log.debug("Auth request received [{}]", message);
+				log.info("Auth request received [{}]", message);
 				handleAuthRequest(ctx);
 				break;
 
 			case Value.TEXT_DISCONNECT_NOTICE:
-				log.debug("Disconnect notice received [{}]", message);
+				log.info("Disconnect notice received [{}]", message);
 				handleDisconnectionNotice();
 				break;
 
@@ -171,7 +171,6 @@ public abstract class AbstractEslClientHandler extends SimpleChannelInboundHandl
 	 * @return an {@link EslMessage} containing command results
 	 */
 	public CompletableFuture<EslMessage> sendSyncApiCommand(Channel channel, String command, String arg) {
-
 		checkArgument(!isNullOrEmpty(command), "command may not be null or empty");
 		checkArgument(!isNullOrEmpty(arg), "arg may not be null or empty");
 

@@ -13,19 +13,16 @@ public class ClientExample {
 
     public static void main(String[] args) {
         try {
-            if (args.length < 1) {
-                System.out.println("Usage: java ClientExample PASSWORD");
-                return;
-            }
-
-            String password = args[0];
-
             Client client = new Client();
 
-            client.addEventListener((ctx, event) -> L.info("Received event: {}", event.getEventName()));
+            client.addEventListener(new ESLEventListener());
 
-            client.connect(new InetSocketAddress("localhost", 8021), password, 10);
+            client.connect(new InetSocketAddress("192.168.10.100", 8021), "ClueCon", 10);
             client.setEventSubscriptions(EventFormat.PLAIN, "all");
+
+            // 取消不需要的订阅事件
+            client.cancelEventSubscriptions("RE_SCHEDULE", "MESSAGE_WAITING", "MESSAGE_QUERY")
+                    .forEach(System.out::println);
 
         } catch (Throwable t) {
             Throwables.propagate(t);
