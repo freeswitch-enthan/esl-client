@@ -29,7 +29,6 @@ public class EslMessage {
 
 	private final Map<Name, String> headers = new HashMap<>();
 	private final List<String> body = new ArrayList<>();
-
 	private Integer contentLength = null;
 
 	/**

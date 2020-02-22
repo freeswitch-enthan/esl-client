@@ -53,10 +53,13 @@ public class EslEvent {
 		// plain or xml body
 		if (rawMessage.getContentType().equals(Value.TEXT_EVENT_PLAIN)) {
 			parsePlainBody(rawMessage.getBodyLines());
+
 		} else if (rawMessage.getContentType().equals(Value.TEXT_EVENT_XML)) {
 			throw new IllegalStateException("XML events are not yet supported");
+
 		} else if (rawMessage.getContentType().equals(Value.COMMAND_REPLY) && parseCommandReply) {
 			parsePlainBody(rawMessage.getBodyLines());
+
 		} else {
 			throw new IllegalStateException("Unexpected EVENT content-type: " +
 				rawMessage.getContentType());
@@ -149,7 +152,7 @@ public class EslEvent {
 					try {
 						String decodedValue = URLDecoder.decode(headerParts[1], "UTF-8");
 						log.trace("decoded from: [{}]", headerParts[1]);
-						log.trace("decoded   to: [{}]", decodedValue);
+						log.trace("decoded to: [{}]", decodedValue);
 						eventHeaders.put(headerParts[0], decodedValue);
 					} catch (UnsupportedEncodingException e) {
 						log.warn("Could not URL decode [{}]", headerParts[1]);
