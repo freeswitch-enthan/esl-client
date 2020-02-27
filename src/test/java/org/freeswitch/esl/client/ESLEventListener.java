@@ -14,6 +14,7 @@ public class ESLEventListener implements IEslEventListener {
 
     @Override
     public void onEslEvent(Context ctx, EslEvent event) {
+        log.info("===================================================================\n");
         Map<String, String> headers = event.getEventHeaders();
 
         if (event.getEventName().equals("API")) {
@@ -79,6 +80,14 @@ public class ESLEventListener implements IEslEventListener {
         } else if (event.getEventName().equals("CHANNEL_DESTROY")) {
             showHeaderDetail(event);
 
+        } else if (event.getEventName().equals("CUSTOM")) {
+            if (headers.get("Action").contains("talking") || headers.get("Action").contains("play-file")) {
+                return;
+            }
+
+            log.info("CUSTOME_CONFERENCE --> Action[{}]", headers.get("Action"));
+            showHeaderDetail(event);
+
         } else {
             log.info("Other ESL Event Name: {}", event.getEventName());
             showHeaderDetail(event);
@@ -93,7 +102,6 @@ public class ESLEventListener implements IEslEventListener {
             String key = it.next();
             log.info(eventName + "-->{}={} ", key, headers.get(key));
         }
-        log.info("===================================================================\n");
     }
 
 }

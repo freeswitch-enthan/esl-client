@@ -73,9 +73,6 @@ public class EslEventHeaderNames {
      */
     public static final String JOB_COMMAND = "Job-Command";
 
-    /**
-     * {@code "Job-UUID"}
-     */
     public static final String JOB_UUID = "Job-UUID";
 
     private EslEventHeaderNames() {
@@ -83,18 +80,18 @@ public class EslEventHeaderNames {
     }
 
     public enum EventName {
-        //*******************************************************************************
-        //   CUSTOME: Event-Name is CUSTOME, usage for models (mod_conference、mod_sofia、mod_fifo)
-        //*******************************************************************************
+        //********************************************************************************************
+        //   CUSTOME: 事件名称为 CUSTOME, usage for models (mod_conference、mod_sofia、mod_fifo)
+        //********************************************************************************************
         // Event-Subclass for conference
         CUSTOME_CONFERENCE("CUSTOME", "conference::maintenaince"),
 
         // Event-Subclass for fifo
         CUSTOME_FIFO("CUSTOME", "fifo::info"),
 
-        //*******************************************************************************
+        //********************************************************************************************
         //   Channel: state of Channel
-        //*******************************************************************************
+        //********************************************************************************************
         // 系统中有来话或去话时，将生成一个新的Channel
         CHANNEL_CREATE("CHANNEL", "CHANNEL_CREATE"),
 
@@ -123,9 +120,9 @@ public class EslEventHeaderNames {
         // Channel已经完全释放了
         CHANNEL_DESTROY("CHANNEL", "CHANNEL_DESTROY"),
 
-        //*******************************************************************************
+        //********************************************************************************************
         //   Channel相关事件：有Channel有关，名字不是以CHANNEL_开头
-        //*******************************************************************************
+        //********************************************************************************************
         // 播放声音
         PLAYBACK_START("PLAYBACK", "PLAYBACK_START"),
         PLAYBACK_STOP("PLAYBACK", "PLAYBACK_STOP"),
@@ -137,9 +134,9 @@ public class EslEventHeaderNames {
         // 双音多频按键信息
         DTMF("DTMF", "DTMF"),
 
-        //*******************************************************************************
+        //********************************************************************************************
         //   系统事件
-        //*******************************************************************************
+        //********************************************************************************************
         // 系统启动、关闭
         STARTUP("SYSTEM", "STARTUP"),
         SHUTDOWN("SYSTEM", "SHUTDOWN"),
@@ -151,9 +148,9 @@ public class EslEventHeaderNames {
         // 心跳：间隔20秒
         HEARTBEAT("SYSTEM", "HEARTBEAT"),
 
-        //*******************************************************************************
+        //********************************************************************************************
         //   其他事件
-        //*******************************************************************************
+        //********************************************************************************************
         // 执行API时产生
         API("API", "API"),
 
@@ -173,6 +170,10 @@ public class EslEventHeaderNames {
         EventName(String type, String literal) {
             this.type = type;
             this.literal = literal;
+        }
+
+        public String type() {
+            return type;
         }
 
         public String literal() {

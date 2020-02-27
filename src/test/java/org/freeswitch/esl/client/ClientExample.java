@@ -18,12 +18,14 @@ public class ClientExample {
             client.addEventListener(new ESLEventListener());
 
             client.connect(new InetSocketAddress("192.168.10.100", 8021), "ClueCon", 10);
-            client.setEventSubscriptions(EventFormat.PLAIN, "all");
+//            client.setEventSubscriptions(EventFormat.PLAIN, "all");
+            client.setEventSubscriptions(EventFormat.PLAIN, "CUSTOM conference::maintenance");
 
             // 取消不需要的订阅事件
-            client.cancelEventSubscriptions("RE_SCHEDULE", "MESSAGE_WAITING", "MESSAGE_QUERY")
-                    .forEach(System.out::println);
+//            client.cancelEventSubscriptions("RE_SCHEDULE", "MESSAGE_WAITING", "MESSAGE_QUERY").forEach(System.out::println);
 
+
+            Thread.currentThread().join();
         } catch (Throwable t) {
             Throwables.propagate(t);
         }

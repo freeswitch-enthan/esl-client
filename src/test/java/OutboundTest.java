@@ -35,8 +35,7 @@ public class OutboundTest {
                     new InetSocketAddress("localhost", 8084),
                     () -> new IClientHandler() {
                         @Override
-                        public void onConnect(Context context,
-                                EslEvent eslEvent) {
+                        public void onConnect(Context context, EslEvent eslEvent) {
                             logger.warn(nameMapToString(eslEvent
                                     .getMessageHeaders(), eslEvent.getEventBodyLines()));
 
